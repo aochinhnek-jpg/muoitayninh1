@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Giáng Sinh & Nhóm Thành Viên + Hi?u ?ng tuy?t roi</title>
+
+<style>
+    html, body { height:100%; margin:0; padding:0; }
+    body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(#0f172a, #071027);
+        margin: 0;
+        padding: 40px;
+        color: #fff;
+        overflow-x: hidden;
+    }
+
+    #snow-canvas, #snow-canvas2 {
+        position: fixed;
+        left: 0; top: 0;
+        width: 100vw; height: 100vh;
+        pointer-events: none;
+        display: block;
+        z-index: 9999;
+    }
+
+    h1 {
+        text-align: center;
+        color: cyan;
+        margin-bottom: 10px;
+        text-shadow: 0 0 15px cyan;
+        position: relative;
+        z-index: 1;
+    }
+
+    h2#countdown {
+        text-align: center;
+        color: yellow;
+        margin-bottom: 30px;
+        text-shadow: 0 0 10px yellow;
+        position: relative;
+        z-index: 1;
+    }
+
+    h2.section-title {
+        color: red;
+        margin-top: 40px;
+        position: relative;
+        z-index: 1;
+    }
+
+    h3.section-content {
+        color: #fff;
+        margin-bottom: 20px;
+        line-height: 1.6;
+        position: relative;
+        z-index: 1;
+    }
+
+    .team-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        width: 90%;
+        margin: 40px auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .member-card {
+        background: linear-gradient(145deg, #1c1c1c, #111);
+        padding: 25px;
+        border-radius: 20px;
+        text-align: center;
+        transition: 0.4s;
+        box-shadow: 0 0 20px rgba(0,255,200,0.15);
+        cursor: pointer;
+    }
+
+    .member-card:hover {
+        transform: scale(1.03);
+        box-shadow: 0 0 25px rgba(0,255,255,0.4);
+    }
+
+    .avatar {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        border: 3px solid cyan;
+        object-fit: cover;
+        margin-bottom: 15px;
+        box-shadow: 0 0 12px cyan;
+    }
+
+    .name {
+        font-size: 1.4em;
+        font-weight: bold;
+        color: cyan;
+        margin-bottom: 5px;
+    }
+
+    .role {
+        opacity: 0.85;
+        font-size: 1.05em;
+        margin-bottom: 12px;
+    }
+
+    .desc {
+        font-size: 0.9em;
+        opacity: 0.75;
+        line-height: 1.5;
+    }
+
+    /* Popup */
+    .popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.75);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(6px);
+        z-index: 10000;
+    }
+
+    .popup-content {
+        background: #111;
+        padding: 30px;
+        border-radius: 18px;
+        width: 350px;
+        text-align: center;
+        box-shadow: 0 0 20px cyan;
+        animation: showPopup 0.3s ease;
+    }
+
+    @keyframes showPopup {
+        from { transform: scale(0.7); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+
+    .popup img {
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        border: 3px solid cyan;
+        margin-bottom: 15px;
+    }
+
+    .close-btn {
+        margin-top: 20px;
+        padding: 10px 25px;
+        background: cyan;
+        color: #000;
+        cursor: pointer;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .close-btn:hover {
+        background: #00f7ff;
+    }
+
+</style>
+</head>
+<body>
+
+<!-- Canvas tuy?t roi -->
+<canvas id="snow-canvas"></canvas>
+<canvas id="snow-canvas2"></canvas>
+
+<!-- Tiêu d? và countdown -->
+<h1>?? L? Giáng Sinh 2025 ??</h1>
+<h2 id="countdown"></h2>
+
+<!-- N?i dung Noel -->
+<h2 class="section-title">1. Noel ngày nào? Bao nhiêu ngày n?a d?n Noel 2025?</h2>
+<h3 class="section-content">Noel hay còn g?i là l? Giáng sinh di?n ra vào dêm 24 và kéo dài d?n h?t ngày 25/12 hàng nam. Noel nam 2025 roi vào th? Tu ngày 24 tháng 12 (L? V?ng Giáng Sinh) và th? Nam ngày 25 tháng 12 (L? chính th?c). Tính t? th? Sáu 05/12/2025 thì ch? còn 20 ngày n?a là d?n Noel 2025. Ðây là d?p d?c bi?t trong nam, khi m?i ngu?i trên th? gi?i d?u cùng nhau hòa vào b?u không khí tràn ng?p yêu thuong và l?i chúc t?t d?p.</h3>
+
+<h3 class="section-content">Ð?i v?i ngu?i Công giáo thì ngày Noel là m?t trong hai d?p l? l?n và thiêng liêng nh?t trong nam bên c?nh d?p l? Ph?c sinh. Ðêm 24 là ngày Chúa Jesus sinh ra t?i Bethlehem, x? Judea c?a nu?c Do Thái. Vì th?, d?i v?i ngu?i Công giáo, Noel còn có cái tên khác là Christmas (Christ Mass), Emmanuel (Thiên Chúa ? cùng chúng ta) hay l? Thiên Chúa Giáng sinh làm Ngu?i.</h3>
+<img src="file:///C:/Users/Administrator/Desktop/html/ngay-noel-1-1730056840.jpg">
+<h2 class="section-title">2. Ngu?n g?c c?a ngày Noel</h2>
+
+<h3 class="section-content">Ngày Noel g?n li?n v?i bi?n c? Chúa Jesus xu?ng th? làm ngu?i d? c?u chu?c nhân tr?n. Theo sách Phúc âm Thánh Lucas và Mattew, M? Maria h? sinh Hài nhi Jesus trong chu?ng gia súc t?i vùng Bethlehem, vào kho?ng 12 gi? dêm ngày 24 tháng 12.</h3>
+<h3 class="section-content">Ngày ?y, Hoàng d? La Mã và Sê-sa Au-gút-to l?nh ngu?i Do Thái tr? v? thành d? dang ký tên vào s?. Thánh Joseph (Thánh c? Giuse), t?c b?n d?i tram nam c?a M? Maria, dã dua M? lên du?ng v? thành. Khi ?y, M? Maria dã g?n d?n ngày mãn nguy?t khai hoa.</h3>
+
+<h3 class="section-content">V? d?n Bethlehem, không tìm du?c ch? ngh? dêm nên M? và Thánh Joseph ph?i ngh? ngoi trong chu?ng gia súc. Khi ?y, M? h? sinh Hài nhi Jesus, l?y v?i qu?n t?m thân Ngu?i và d?t vào máng c? d? xua di cái rét dêm dông.</h3>
+<h3 class="section-content">Vào th?i kh?c ?y, ? g?n Bethlehem có nh?ng ngu?i chan c?u dang ? ngoài d?ng d? canh gi? b?y gia súc. M?t thiên s? thình lình xu?t hi?n tru?c m?t h? và thông báo r?ng: ‘Ð?ng s?, tôi d?n báo cho các anh m?t tin m?ng. Hôm nay, Ð?ng Messiah dã ra d?i t?i Bethlehem’. Cùng lúc ?y, vô s? thiên s? hi?n ra trên tr?i và cùng nhau chúc t?ng: ‘Vinh danh Thiên Chúa trên tr?i, bình an du?i th? cho loài ngu?i.’</h3>
+
+<h3 class="section-content">Nghe v?y, nh?ng ngu?i chan c?u cùng nhau v?i vàng di d?n Bethlehem. H? g?p M? Maria và Thánh Joseph cùng hài nhi m?i sinh dang n?m trong máng c?. H? k? l?i l?i c?a s? th?n cho m?i ngu?i xung quanh, ai n?y nghe xong cung d?u kinh ng?c.</h3>
+<h3 class="section-content">10 ngày sau, m?t ngôi sao sáng dã d?n du?ng cho ba v? vua phuong Ðông d?n bái l?y. H? mang theo vàng, nhu huong, m?c du?c t? phuong xa d?n bái l?y Ð?ng C?u Th?. Sau dó, h? du?c báo ph?i di du?ng khác d? tr? v? x? mình.</h3>
+<img src="file:///C:/Users/Administrator/Desktop/html/ngay-noel-2-1730056840.jpg">
+<h2 class="section-title">3.Ý nghia c?a ngày Giáng Sinh</h2>
+
+<h3 class="section-title">Giáng Sinh là ngày k? ni?m chúa Giêsu chào d?i, mang l?i bình an và h?nh phúc cho nhân lo?i v?i thông di?p "Vinh danh Thu?ng Ð? trên cao - Bình an cho ngu?i du?i th?". Thì dây còn du?c xem là d?p d?c bi?t trong nam d? m?i ngu?i cùng nhau quây qu?n, sum h?p v?i ngu?i thân, b?n bè d? chia s? nh?ng câu chuy?n vui bu?n trong nam, t? ch?c nh?ng b?a ti?c an u?ng cùng nhau,...</h3>
+<h3 class="section-title">Vào ngày Giáng sinh, nh?ng d?a tr? thu?ng u?c nguy?n và ch? "ông già noel" xu?t hi?n d? bi?n thành s? th?t. Và th?t dáng h?nh phúc thay khi nh?ng ngu?i thân yêu trong gia dình l?i chính là ngu?i t?o ra nh?ng "phép màu" dó cho các bé.</h3>
+<img src="file:///C:/Users/Administrator/Desktop/html/ngay-noel-3-1730056840.jpg">
+<h2 class="section-title">4.S? khác nhau gi?a dêm 24 và ngày 25 trong Giáng sinh
+</h2>
+<h3 class="section-title">4.1 Ðêm 24/12 - L? V?ng c?a Giáng sinh</h3>
+<h4 class="section-titile">Ðêm 24/12 Giáng sinh là ngày nào, có ý nghia gì? L? V?ng Giáng sinh du?c t? ch?c vào dêm 24/12, là m?t ph?n quan tr?ng c?a l? Giáng sinh. Ðây là th?i di?m m?i ngu?i chu?n b? và trang hoàng cho ngày l? chính. T?i L? V?ng, cây thông Giáng sinh và nh?ng ánh dèn du?c trang trí sáng lung linh b?t d?u t?o ra không gian l? h?i ?m áp.</h4>
+
+<h4 class="section-title">Ngoài vi?c trang trí, L? V?ng là th?i di?m m?i ngu?i t?p trung tham d? các bu?i l? trong dêm, thu?ng du?c t? ch?c t?i nhà th? ho?c trong các gia dình. L? V?ng t?o ra không khí tâm linh, là d?p d? ngu?i ta suy tôn v? s? ki?n quan tr?ng c?a Chúa Giêsu sinh ra d?i. Ngoài ra, dây cung là th?i di?m d? m?i ngu?i chia s? ni?m tin và tình yêu thuong v?i nhau trong b?a t?i gia dình, tru?c khi chính th?c dón m?ng ngày l? Giáng sinh vào ngày hôm sau.</h4>
+<img src="file:///C:/Users/Administrator/Desktop/html/ngay-noel-4-1730056839.jpg">
+<h3 class="section-title">4.2 Ngày 25/12 - L? Giáng sinh chính</h3>
+<h4 class="section-title">Ngày 25/12 là ngày ra d?i c?a Chúa Giêsu. Dù không có s? ch?c ch?n, nhung ngày 25/12 dã tr? thành ngày quy u?c d? tôn vinh và k? ni?m s? ki?n quan tr?ng này.</h4>
+<h4 class="section-title">Trong l? Giáng sinh, c? th? là vào l? chính ngày, ngu?i ta thu?ng tham gia các l? kính, c?u nguy?n t?i các nhà th? và các noi tôn th?. Ðây là th?i di?m d? m?i ngu?i t?p trung vào ý nghia tâm linh c?a ngày l? và suy tôn v? s? ra d?i c?a Chúa Giêsu - Ngu?i mang s? m?nh c?u d? loài ngu?i.</h4>
+
+<h4 class="section-title">
+Ngoài l? kính, ngày 25/12 còn là th?i di?m m?i ngu?i t?ng quà và chia s? ni?m vui cùng gia dình và b?n bè. Ðây là d?p d? th? hi?n tình yêu thuong và lòng bi?t on d?i v?i nhau, t?o nên không gian ?m áp, h?nh phúc trong mùa l? Noel.</h4>
+      <img src="file:///C:/Users/Administrator/Desktop/html/ngay-noel-5-1730056839.jpg">
+<!-- Gi?i thi?u nhóm thành viên -->
+<h1>? Nhóm Mu?i Tây Ninh ?</h1>
+
+<div class="team-container">
+    <!-- Member cards gi? nguyên -->
+    <div class="member-card" data-name="Ph?m Ng?c Hào" data-role="Leader" data-desc="Ngu?i d?n d?t và d?nh hu?ng chi?n lu?c phát tri?n d?i nhóm.">
+        <img class="avatar" src="file:///C:/Users/Administrator/Desktop/html/d1219810-3ab3-469b-8236-aeafe8281431.jpg">
+        <div class="name">Ph?m Ng?c Hào</div>
+        <div class="role">Leader</div>
+    </div>
+    <div class="member-card" data-name="Ph?m Ðình Phu?c" data-role="Designer" data-desc="Sáng t?o giao di?n, t?i uu tr?i nghi?m ngu?i dùng d?y tinh t?.">
+        <img class="avatar" src="https://i.imgur.com/6VBx3io.png">
+        <div class="name">Ph?m Ðình Phu?c</div>
+        <div class="role">Designer</div>
+    </div>
+    <div class="member-card" data-name="Nguy?n M?nh Pháp" data-role="Front-end Dev" data-desc="Hi?n th?c hóa thi?t k? thành website s?ng d?ng và hi?n d?i.">
+        <img class="avatar" src="file:///C:/Users/Administrator/Desktop/html/595029547_1144618154108514_737676240292304049_n.jpg">
+        <div class="name">Nguy?n M?nh Pháp</div>
+        <div class="role">Front-end Dev</div>
+    </div>
+    <div class="member-card" data-name="Ph?m Thanh Tr?ng" data-role="Back-end Dev" data-desc="Xây d?ng h? th?ng logic m?nh m?, b?o m?t và hi?u su?t cao.">
+        <img class="avatar" src="https://i.imgur.com/6VBx3io.png">
+        <div class="name">Ph?m Thanh Tr?ng</div>
+        <div class="role">Back-end Dev</div>
+    </div>
+    <div class="member-card" data-name="Nguy?n Thành Danh" data-role="Tester" data-desc="Ð?m b?o s?n ph?m ho?t d?ng ?n d?nh và không có l?i.">
+        <img class="avatar" src="https://i.imgur.com/6VBx3io.png">
+        <div class="name">Nguy?n Thành Danh</div>
+        <div class="role">Tester</div>
+    </div>
+    <div class="member-card" data-name="Ð? T?n Cao Khoa" data-role="Content Creator" data-desc="Truy?n t?i thông di?p và sáng t?o n?i dung h?p d?n cho d? án.">
+        <img class="avatar" src="file:///C:/Users/Administrator/Desktop/html/594954611_2011963202901082_7933104153107956870_n.jpg">
+        <div class="name">Ð? T?n Cao Khoa</div>
+        <div class="role">Content Creator</div>
+    </div>
+    <div class="member-card" data-name="Nguy?n Thanh Trà" data-role="Supporter" data-desc="H? tr? k? thu?t, dóng góp ý tu?ng và d?m b?o ti?n d? nhóm ?n d?nh.">
+        <img class="avatar" src="file:///C:/Users/Administrator/Desktop/html/597152427_813922721644344_6147804387700000879_n.jpg">
+        <div class="name">Nguy?n Thanh Trà</div>
+        <div class="role">Supporter</div>
+    </div>
+</div>
+
+<!-- Popup -->
+<div class="popup" id="popup">
+    <div class="popup-content">
+        <img id="popup-img" src="">
+        <h2 id="popup-name"></h2>
+        <h4 id="popup-role" style="color:cyan;"></h4>
+        <p id="popup-desc" style="opacity:0.8;"></p>
+        <div class="close-btn" onclick="closePopup()">Ðóng</div>
+    </div>
+</div>
+
+<script>
+    // --------- Popup thành viên ---------
+    const cards = document.querySelectorAll(".member-card");
+    const popup = document.getElementById("popup");
+
+    cards.forEach(card => {
+        card.addEventListener("click", () => {
+            document.getElementById("popup-img").src = card.querySelector("img").src;
+            document.getElementById("popup-name").innerText = card.dataset.name;
+            document.getElementById("popup-role").innerText = card.dataset.role;
+            document.getElementById("popup-desc").innerText = card.dataset.desc;
+            popup.style.display = "flex";
+        });
+    });
+
+    function closePopup() { popup.style.display = "none"; }
+    popup.addEventListener("click", e => { if(e.target === popup) closePopup(); });
+
+    // --------- Countdown Giáng Sinh ---------
+    function updateCountdown() {
+        const now = new Date();
+        let christmas = new Date(now.getFullYear(), 11, 25);
+        if (now > christmas) christmas.setFullYear(christmas.getFullYear()+1);
+        const diff = christmas - now;
+        const days = Math.floor(diff/(1000*60*60*24));
+        const hours = Math.floor((diff/(1000*60*60)) % 24);
+        const minutes = Math.floor((diff/(1000*60)) % 60);
+        const seconds = Math.floor((diff/1000) % 60);
+        document.getElementById("countdown").innerText =
+            `Còn ${days} ngày ${hours} gi? ${minutes} phút ${seconds} giây d?n Giáng Sinh ??`;
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // --------- Tuy?t roi ---------
+    const canvas = document.getElementById('snow-canvas');
+    const ctx = canvas.getContext('2d');
+    const canvas2 = document.getElementById('snow-canvas2');
+    const ctx2 = canvas2.getContext('2d');
+    let W = canvas.width = innerWidth;
+    let H = canvas.height = innerHeight;
+    canvas2.width = W; canvas2.height = H;
+
+    window.addEventListener('resize', () => { 
+        W = canvas.width = innerWidth; H = canvas.height = innerHeight;
+        canvas2.width = W; canvas2.height = H;
+    });
+
+    function rand(min,max){ return Math.random()*(max-min)+min; }
+
+    class FlakeRound {
+        constructor(){ this.reset(true); }
+        reset(initial=false){
+            this.x = rand(0,W); this.y = initial?rand(0,H):rand(-50,-10);
+            this.size = rand(1,4); this.speed = rand(0.3,1.5); this.wind = rand(-0.3,0.3);
+            this.alpha = 0.5+Math.random()*0.5;
+        }
+        update(){ this.y+=this.speed; this.x+=this.wind; if(this.y>H)this.reset(false); }
+        draw(ctx){ ctx.beginPath(); ctx.globalAlpha=this.alpha; ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill();}
+    }
+
+    class SnowStar {
+        constructor(){ this.reset(true); }
+        reset(initial=false){ this.x=rand(0,W); this.y=initial?rand(0,H):rand(-80,-20); this.size=rand(4,9); this.speed=rand(0.4,1.2); this.spin=rand(-0.02,0.02); this.angle=rand(0,Math.PI*2); }
+        update(){ this.y+=this.speed; this.angle+=this.spin; if(this.y>H+20)this.reset(false); }
+        draw(ctx){ ctx.save(); ctx.translate(this.x,this.y); ctx.rotate(this.angle); ctx.strokeStyle='white'; ctx.lineWidth=1; ctx.beginPath(); for(let i=0;i<6;i++){ ctx.moveTo(0,0); ctx.lineTo(this.size,0); ctx.rotate(Math.PI/3);} ctx.stroke(); ctx.restore(); }
+    }
+
+    let flakesRound=[], snowStars=[];
+    for(let i=0;i<150;i++) flakesRound.push(new FlakeRound());
+    for(let i=0;i<50;i++) snowStars.push(new SnowStar());
+
+    function animate(){
+        ctx.clearRect(0,0,W,H);
+        ctx2.clearRect(0,0,W,H);
+        flakesRound.forEach(f=>{ f.update(); f.draw(ctx); });
+        snowStars.forEach(s=>{ s.update(); s.draw(ctx2); });
+        requestAnimationFrame(animate);
+    }
+    animate();
+// T? d?ng phát khi ngu?i dùng tuong tác
+let music = document.getElementById("bg-music");
+let btn = document.getElementById("music-btn");
+let playing = false;
+
+btn.addEventListener("click", () => {
+    if (!playing) {
+        music.play();
+        playing = true;
+        btn.innerText = "?? T?t nh?c";
+    } else {
+        music.pause();
+        playing = false;
+        btn.innerText = "?? Nh?c Noel";
+    }
+});
+</script>
+
+</body>
+</html>
